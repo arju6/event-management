@@ -1,12 +1,12 @@
 
 "use client"
 import { useParams, useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { Suspense, useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
 
 
-export default  function Edit(){
+function EditForm(){
         const [note, setNote] = useState({ title: "", description: "" })
         const {id}=useParams()
         const router=useRouter()
@@ -72,5 +72,13 @@ export default  function Edit(){
             </div>
 
         </div>
+    )
+}
+
+export default function Edit(){
+    return (
+        <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading note...</div>}>
+            <EditForm />
+        </Suspense>
     )
 }
