@@ -7,17 +7,37 @@ import users from "@/models/userModel"
 
 export async function POST(req: NextRequest) {
  try{
-     await connectDB();
-    const { name, email, password } = await req.json();
-    const existingUser=await users.findOne({email})
+    const body: unknown = await req.json();
+    if (typeof body !== "object" || body === null) {
+      return NextResponse.json({ message: "Invalid registration details" }, { status: 400 });
+    }
+
+    const { name, email, password } = body as Record<string, unknown>;
+    if (
+      typeof name !== "string" ||
+      typeof email !== "string" ||
+      typeof password !== "string" ||
+      name.trim().length < 2 ||
+      password.length < 8 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+    ) {
+      return NextResponse.json(
+        { message: "Enter a valid name, email, and password of at least 8 characters" },
+        { status: 400 },
+      );
+    }
+
+    await connectDB();
+    const normalizedEmail = email.trim().toLowerCase();
+    const existingUser = await users.findOne({ email: normalizedEmail });
     
     if(existingUser){
         return NextResponse.json({message:"Already registered..PLease login",data:{}},{status:409})
     }
     else{
         const encryptedPassword=await bcrypt.hash(password,10)
-        const newUser=await users.create({name,email,password:encryptedPassword})
-        return NextResponse.json({message:"User registered succesfully",data:newUser},{status:201})
+        await users.create({name:name.trim(),email:normalizedEmail,password:encryptedPassword})
+        return NextResponse.json({message:"User registered successfully",data:{}},{status:201})
 
     }
  }  

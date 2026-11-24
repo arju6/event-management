@@ -22,6 +22,14 @@ export default function Register() {
             toast.error("Please fill the form completely");
             return;
         }
+        if (name.trim().length < 2) {
+            toast.error("Name must be at least 2 characters");
+            return;
+        }
+        if (password.length < 8) {
+            toast.error("Password must be at least 8 characters");
+            return;
+        }
 
         setIsSubmitting(true);
         try {
@@ -62,6 +70,7 @@ export default function Register() {
                         onChange={(e) => setUserdetails({ ...userDetails, email: e.target.value })}
                         type="email"
                         name="email"
+                        autoComplete="email"
                         placeholder="Email"
                         className="w-full rounded-lg border border-gray-300 px-3 py-2"
                     />
@@ -70,6 +79,7 @@ export default function Register() {
                         onChange={(e) => setUserdetails({ ...userDetails, password: e.target.value })}
                         type="password"
                         name="password"
+                        autoComplete="new-password"
                         placeholder="Password"
                         className="w-full rounded-lg border border-gray-300 px-3 py-2"
                     />

@@ -1,68 +1,92 @@
-
 "use client"
+
 import { useParams, useRouter } from "next/navigation"
-import { Suspense, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import toast from "react-hot-toast"
 
-
-
-function EditForm(){
-        const [note, setNote] = useState({ title: "", description: "" })
+export default  function Edit(){
+        const [event, setEvent] = useState({
+            eventName: "",
+            description: "",
+            eventDate: "",
+            venue: "",
+            eventType: "",
+            status: ""
+        })
         const {id}=useParams()
         const router=useRouter()
         useEffect(() => {
-         getNote()
-        }, [])
-        
+            let isActive = true
+            const loadEvent = async () => {
+                const res = await fetch(`/api/event/${id}`)
+                const response = await res.json()
+                if (res.ok && isActive) {
+                    setEvent({
+                        eventName: response.data.eventName,
+                        description: response.data.description,
+                        eventDate: new Date(response.data.eventDate).toISOString().slice(0, 10),
+                        venue: response.data.venue,
+                        eventType: response.data.eventType,
+                        status: response.data.status
+                    })
+                }
+            }
 
-        const getNote=async()=>{
+            void loadEvent()
+            return () => {
+                isActive = false
+            }
+        }, [id])
 
-           const res=await fetch(`/api/note/${id}`)
-           const response=await res.json()
-        //    console.log(response);
-        if(res.status==200){
-            setNote(response.data)
-        }
-           
+        const updateEvent=async()=>{
 
+            const { eventName, description, eventDate, venue, eventType, status } = event
+            if(eventName && description && eventDate && venue && eventType && status){
 
-        }
-
-        const updateNote=async()=>{
-
-            const {title,description}=note
-            if(title&&description){
-
-             const res=await fetch(`/api/note/${id}`,{
+             const res=await fetch(`/api/event/${id}`,{
                     method:'PUT',
-                    body:JSON.stringify(note)
+                    headers: { "Content-Type": "application/json" },
+                    body:JSON.stringify(event)
                 })
               const response=await  res.json()
-            //   console.log(response);
-              if(res.status==200){
-                toast.success("Note Updated Successfully")
+              if(res.ok){
+                toast.success("Event Updated Successfully")
                 router.push('/dashboard')
+              } else {
+                toast.error(response.message)
               }
 
             }
             else{
-                toast.error("enter title and description")
+                toast.error("Please fill in all event fields")
             }
         }
-    
+
     return(
-        
+
         <div className="flex items-center justify-center min-h-screen flex-col">
-            <h1 className="text-red-700 my-5 text-4xl font-bold">UPDATE YOUR NOTE</h1>
+            <h1 className="text-red-700 my-5 text-4xl font-bold">UPDATE YOUR EVENT</h1>
             <div className="bg-white w-100 rounded-2xl mt-5 p-6 shadow-sm border border-slate-200   border-t-4 border-t-rose-400 border-b-4 border-b-rose-400">
                 <form>
                     <div>
-                        <input value={note.title} onChange={(e) => setNote({ ...note, title: e.target.value })} type="text" placeholder="Title" className="p-2 border border-rose-400  rounded shadow w-full" />
+                        <input value={event.eventName} onChange={(e) => setEvent({ ...event, eventName: e.target.value })} type="text" placeholder="Event Name" className="p-2 border border-rose-400  rounded shadow w-full" />
                     </div>
                     <div className="my-2">
-                        <textarea value={note.description} onChange={(e) => setNote({ ...note, description: e.target.value })} placeholder="Description" className="p-2 border border-rose-400  rounded shadow w-full" />
+                        <textarea value={event.description} onChange={(e) => setEvent({ ...event, description: e.target.value })} placeholder="Description" className="p-2 border border-rose-400  rounded shadow w-full" />
                     </div>
-                    <button onClick={updateNote} type="button"  className="bg-rose-600 text-white font-bold w-full p-2 rounded">
+                    <div className="my-2">
+                        <input value={event.eventDate} onChange={(e) => setEvent({ ...event, eventDate: e.target.value })} type="date" aria-label="Event Date" className="p-2 border border-rose-400 rounded shadow w-full" />
+                    </div>
+                    <div className="my-2">
+                        <input value={event.venue} onChange={(e) => setEvent({ ...event, venue: e.target.value })} type="text" placeholder="Venue" className="p-2 border border-rose-400 rounded shadow w-full" />
+                    </div>
+                    <div className="my-2">
+                        <input value={event.eventType} onChange={(e) => setEvent({ ...event, eventType: e.target.value })} type="text" placeholder="Event Type" className="p-2 border border-rose-400 rounded shadow w-full" />
+                    </div>
+                    <div className="my-2">
+                        <input value={event.status} onChange={(e) => setEvent({ ...event, status: e.target.value })} type="text" placeholder="Status" className="p-2 border border-rose-400 rounded shadow w-full" />
+                    </div>
+                    <button onClick={updateEvent} type="button"  className="bg-rose-600 text-white font-bold w-full p-2 rounded">
                         UPDATE</button>
 
 
@@ -72,13 +96,5 @@ function EditForm(){
             </div>
 
         </div>
-    )
-}
-
-export default function Edit(){
-    return (
-        <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading note...</div>}>
-            <EditForm />
-        </Suspense>
     )
 }

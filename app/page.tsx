@@ -1,43 +1,51 @@
 import Image from "next/image";
 import Link from "next/link";
 
-
 export default function Home() {
   return (
-    <main className="grid min-h-screen bg-stone-50 md:grid-cols-2">
-      <section className="flex flex-col items-center justify-center gap-4 px-6 py-16 text-center">
-        <h1 className="text-4xl font-bold text-gray-900">
-          Make space for
-          <span className="mt-2 block text-amber-700">good ideas</span>
+    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden">
+
+      {/* Background Image */}
+      <Image
+        src="/event-management.jpg"
+        alt="Crowd enjoying a live event"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover -z-20"
+      />
+
+      {/* Dark Overlay */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-black/65" />
+
+      {/* Main Content */}
+      <section className="relative z-10 flex w-full max-w-3xl flex-col items-center justify-center gap-4 px-6 py-16 text-center">
+
+        <h1 className="text-4xl font-bold text-white sm:text-6xl">
+          Plan and manage
+          <span className="mt-2 block text-amber-300">
+            your events
+          </span>
         </h1>
-        <p className="mt-6 max-w-lg text-lg leading-8 text-stone-600">
-          Capture your thoughts, keep important things close, and find your
-          focus with a notes app that keeps it simple.
+
+        <p className="mt-6 max-w-lg text-lg leading-8 text-stone-100">
+          Keep event details organized in one place.
         </p>
-        <div className="mt-2 flex gap-3">
+
+        {/* Button */}
+        <div className="relative z-20 mt-6 flex items-center justify-center">
           <Link
             href="/login"
-            className="rounded-xl bg-stone-900 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-stone-900/10 transition hover:-translate-y-0.5"
+            className="inline-flex min-w-[160px] cursor-pointer items-center justify-center rounded-xl bg-amber-400 px-8 py-4 text-base font-bold text-black shadow-lg transition-all duration-300 hover:bg-amber-300 hover:scale-105"
           >
             Get started
           </Link>
         </div>
-        <p className="mt-5 text-sm text-stone-500">
-          Your next great idea is worth writing down.
+
+        <p className="mt-5 text-sm text-stone-200">
+          Sign in to manage your events.
         </p>
-      </section>
-      <section
-        className="flex items-center justify-center px-6 pb-16 md:py-12"
-      >
-        <div className="relative aspect-[4/3] w-full max-w-md overflow-hidden rounded-3xl shadow-xl shadow-stone-900/10">
-          <Image
-            className="object-cover"
-            fill
-            sizes="(max-width: 768px) 90vw, 448px"
-            alt="A visual preview for the notes app"
-            src="https://cdn.shopify.com/s/files/1/1644/5247/files/Best_Notetaking_Apps_for_2026-5.jpg"
-          />
-        </div>
+
       </section>
     </main>
   );

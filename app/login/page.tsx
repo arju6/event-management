@@ -25,7 +25,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
   setIsSubmitting(true);
   try {
     const result = await signIn("credentials", {
-      email, password, redirect: false, callbackUrl: "/dashboard",
+      email: email.trim().toLowerCase(), password, redirect: false, callbackUrl: "/dashboard",
     });
     if (result?.error) {
       toast.error(result.error === "CredentialsSignin"
@@ -56,6 +56,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
             type="email"
             name="email"
             aria-label="Email"
+            autoComplete="email"
             placeholder="Email"
             className="w-full border border-gray-300 px-3 py-2 rounded-lg"
           />
@@ -63,6 +64,7 @@ const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
             type="password"
             name="password"
             aria-label="Password"
+            autoComplete="current-password"
             placeholder="Password"
             className="w-full border border-gray-300 px-3 py-2 rounded-lg"
           />
